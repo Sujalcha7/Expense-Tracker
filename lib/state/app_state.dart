@@ -8,4 +8,14 @@ class MyAppState extends ChangeNotifier {
     expenses.add(expense);
     notifyListeners();
   }
+
+  void deleteExpense(Expense expense) {
+    expenses.remove(expense);
+    notifyListeners();
+  }
+
+  void editExpense(int index, Expense newExpense) {
+    expenses[index] = newExpense;
+    notifyListeners();
+  }
 }
