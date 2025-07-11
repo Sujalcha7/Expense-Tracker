@@ -1,6 +1,6 @@
 # Expense Tracker
 
-A simple and intuitive web application to keep track of your personal expenses and manage your budget efficiently.
+A simple and intuitive Flutter application to keep track of your personal expenses and manage your budget efficiently.
 
 ## Features
 
@@ -11,12 +11,12 @@ A simple and intuitive web application to keep track of your personal expenses a
 - Responsive design for mobile and desktop
 
 ## Demo
+
 <div style="display: flex; gap: 10px;">
   <img src="images/Screenshots/AddExp.png" width="200"/>
   <img src="images/Screenshots/Exps.png" width="200"/>
   <img src="images/Screenshots/EditExps.png" width="200"/>
 </div>
-
 
 Try it live: [Expense Tracker Demo](https://your-demo-url.com)
 
@@ -24,23 +24,25 @@ Try it live: [Expense Tracker Demo](https://your-demo-url.com)
 
 ### Prerequisites
 
-- Node.js >= 18.x
-- npm >= 9.x
+- [Flutter SDK](https://docs.flutter.dev/get-started/install)
+- An IDE such as VS Code or Android Studio with Flutter and Dart plugins
+- A device emulator/simulator or a physical device
 
 ### Installation
 
 ```bash
 git clone https://github.com/Sujalcha7/Expense-Tracker.git
 cd Expense-Tracker
-npm install
+flutter pub get
 ```
 
 ### Running the App
 
 ```bash
-npm start
+flutter run
 ```
-The app will be available at `http://localhost:3000`.
+- Make sure you have a device emulator/simulator running, or a physical device connected.
+- Alternatively, you can select a device and use your IDE's "Run" button.
 
 ## Usage
 
