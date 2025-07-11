@@ -11,9 +11,11 @@ A simple and intuitive web application to keep track of your personal expenses a
 - Responsive design for mobile and desktop
 
 ## Demo
-<img src="images/Screenshots/AddExp.png" width="200"/>
-<img src="images/Screenshots/Exps.png" width="200"/>
-<img src="images/Screenshots/EditExps.png" width="200"/>
+<div style="display: flex; gap: 10px;">
+  <img src="images/Screenshots/AddExp.png" width="200"/>
+  <img src="images/Screenshots/Exps.png" width="200"/>
+  <img src="images/Screenshots/EditExps.png" width="200"/>
+</div>
 
 
 Try it live: [Expense Tracker Demo](https://your-demo-url.com)
