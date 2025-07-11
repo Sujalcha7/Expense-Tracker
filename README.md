@@ -11,7 +11,7 @@ A simple and intuitive web application to keep track of your personal expenses a
 - Responsive design for mobile and desktop
 
 ## Demo
-<img src="images/Screenshots/AddExp.png" width="400"/>
+<img src="images/Screenshots/AddExp.png" width="200"/>
 ![App Screenshot](images/Screenshots/Exps.png)
 ![App Screenshot](images/Screenshots/EditExps.png)
 
