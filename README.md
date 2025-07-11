@@ -12,8 +12,8 @@ A simple and intuitive web application to keep track of your personal expenses a
 
 ## Demo
 <img src="images/Screenshots/AddExp.png" width="200"/>
-![App Screenshot](images/Screenshots/Exps.png)
-![App Screenshot](images/Screenshots/EditExps.png)
+<img src="images/Screenshots/Exps.png" width="200"/>
+<img src="images/Screenshots/EditExps.png" width="200"/>
 
 
 Try it live: [Expense Tracker Demo](https://your-demo-url.com)
