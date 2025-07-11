@@ -12,7 +12,7 @@ A simple and intuitive web application to keep track of your personal expenses a
 
 ## Demo
 
-![App Screenshot](images/screenshots.Screenshot 2025-07-11 124721.png)
+![App Screenshot](images/Screenshots/Screenshot 2025-07-11 124721.png)
 
 Try it live: [Expense Tracker Demo](https://your-demo-url.com)
 
