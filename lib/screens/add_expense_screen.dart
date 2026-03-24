@@ -73,6 +73,8 @@ class AddExpenseScreen extends StatelessWidget {
                         name: name,
                         description: description,
                         amount: amount,
+                        date: DateTime.now(),
+                        category: 'Other',
                       );
                       // print(expense);
                       appState.addExpense(expense);
