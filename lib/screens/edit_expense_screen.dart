@@ -79,9 +79,12 @@ class EditExpenseScreen extends StatelessWidget {
                       final amount = double.tryParse(amountText) ?? 0.0;
 
                       final updatedExpense = Expense(
+                        id: expense.id,
                         name: name,
                         description: description,
                         amount: amount,
+                        date: expense.date,
+                        category: expense.category,
                       );
 
                       // Pass the index when navigating to EditExpenseScreen

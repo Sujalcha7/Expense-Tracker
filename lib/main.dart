@@ -1,14 +1,11 @@
-// import 'package:expense_tracker/screens/expenses_screen.dart';
 import 'package:expense_tracker/screens/home_screen.dart';
 import 'package:expense_tracker/state/app_state.dart';
 import 'package:flutter/material.dart';
-// You will create this file later for your main list of expenses.
-// For now, it's a placeholder for the home screen of your app.
-// import 'package:expense_tracker/screens/add_expense_screen.dart';
-import 'package:provider/provider.dart'; // This import will be needed once you create home_screen.dart
+import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -21,23 +18,25 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Expense Tracker',
         theme: ThemeData(
-          primarySwatch: Colors.blue,
-          primaryColor: const Color.fromARGB(
-            255,
-            120,
-            78,
-            32,
-          ), // You can customize your app's primary color
+          scaffoldBackgroundColor: const Color(0xFFF7F4F7),
+          primaryColor: const Color(0xFF42224A),
+          colorScheme: const ColorScheme.light(
+            primary: Color(0xFF42224A),
+            secondary: Color(0xFFEF8767), // Orange Accent
+            tertiary: Color(0xFF8F659A), // Light Purple Accent
+            surface: Colors.white,
+            onSurface: Color(0xFF120216), // Dark text
+          ),
+          textTheme: GoogleFonts.poppinsTextTheme(
+            Theme.of(context).textTheme,
+          ).apply(
+            bodyColor: const Color(0xFF120216),
+            displayColor: const Color(0xFF120216),
+          ),
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        home: HomeScreen(),
+        home: const HomeScreen(),
       ),
-      // Your main home screen where expenses will be listed
-      // You can define routes here for easier navigation,
-      // but for a beginner, direct Navigator.push is often simpler to start.
-      // routes: {
-      //   '/add-expense': (context) => AddExpenseScreen(),
-      // },
     );
   }
 }
