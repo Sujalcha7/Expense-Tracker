@@ -1,5 +1,8 @@
 import 'package:expense_tracker/screens/add_expense_screen.dart';
 import 'package:expense_tracker/screens/dashboard_screen.dart';
+import 'package:expense_tracker/screens/profile_screen.dart';
+import 'package:expense_tracker/screens/receipt_screen.dart';
+import 'package:expense_tracker/screens/stats_screen.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -19,19 +22,20 @@ class _HomeScreenState extends State<HomeScreen> {
       case 0:
         page = const DashboardScreen();
       case 1:
-        page = const Center(child: Text("Receipts"));
+        page = const ReceiptScreen();
       case 2:
         page = AddExpenseScreen();
       case 3:
-        page = const Center(child: Text("Stats"));
+        page = const StatsScreen();
       case 4:
-        page = const Center(child: Text("Profile"));
+        page = const ProfileScreen();
       default:
         page = const DashboardScreen();
     }
 
     return Scaffold(
-      extendBody: true, // Allows body to go behind the bottom nav if it's transparent
+      extendBody:
+          true, // Allows body to go behind the bottom nav if it's transparent
       body: page,
       bottomNavigationBar: _buildBottomNav(),
     );
@@ -121,11 +125,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-        child: const Icon(
-          Icons.add,
-          color: Colors.white,
-          size: 32,
-        ),
+        child: const Icon(Icons.add, color: Colors.white, size: 32),
       ),
     );
   }
