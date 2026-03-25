@@ -1,4 +1,5 @@
 import 'package:expense_tracker/models/expense.dart';
+import 'package:expense_tracker/screens/edit_expense_screen.dart';
 import 'package:expense_tracker/state/app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -12,8 +13,34 @@ class DetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    final relatedExpenses = appState.expenses.where((e) => e.category == expense.category).toList();
-    final categoryTotal = relatedExpenses.fold(0.0, (sum, item) => sum + item.amount);
+    final currentIndex = appState.expenses.indexWhere(
+      (e) => e.id == expense.id,
+    );
+    if (currentIndex == -1) {
+      return Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: const BackButton(color: Colors.black),
+        ),
+        body: const Center(
+          child: Text(
+            'Expense not found.',
+            style: TextStyle(color: Colors.grey),
+          ),
+        ),
+      );
+    }
+
+    final currentExpense = appState.expenses[currentIndex];
+    final relatedExpenses = appState.expenses
+        .where((e) => e.category == currentExpense.category)
+        .toList();
+    final categoryTotal = relatedExpenses.fold(
+      0.0,
+      (sum, item) => sum + item.amount,
+    );
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -25,11 +52,16 @@ class DetailsScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            _buildTopSection(categoryTotal),
+            _buildTopSection(
+              context,
+              currentExpense,
+              currentIndex,
+              categoryTotal,
+            ),
             const SizedBox(height: 30),
             _buildChartSection(relatedExpenses),
             const SizedBox(height: 30),
-            _buildCategorySelector(),
+            _buildCategorySelector(currentExpense),
             const SizedBox(height: 20),
             Expanded(child: _buildBottomList(relatedExpenses)),
           ],
@@ -38,7 +70,12 @@ class DetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTopSection(double categoryTotal) {
+  Widget _buildTopSection(
+    BuildContext context,
+    Expense currentExpense,
+    int currentIndex,
+    double categoryTotal,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Row(
@@ -58,8 +95,11 @@ class DetailsScreen extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               Text(
-                expense.category,
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                currentExpense.category,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
               ),
               const SizedBox(height: 6),
               Text(
@@ -75,17 +115,39 @@ class DetailsScreen extends StatelessWidget {
           ),
           Column(
             children: [
-              _circleIcon(Icons.edit, Colors.grey.shade50),
+              _actionIconButton(
+                icon: Icons.edit,
+                bg: Colors.grey.shade50,
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditExpenseScreen(
+                        expense: currentExpense,
+                        index: currentIndex,
+                      ),
+                    ),
+                  );
+                },
+              ),
               const SizedBox(height: 16),
-              _circleIcon(Icons.delete, Colors.grey.shade50),
+              _actionIconButton(
+                icon: Icons.delete,
+                bg: Colors.grey.shade50,
+                onPressed: () => _confirmDelete(context, currentExpense),
+              ),
             ],
-          )
+          ),
         ],
       ),
     );
   }
 
-  Widget _circleIcon(IconData icon, Color bg) {
+  Widget _actionIconButton({
+    required IconData icon,
+    required Color bg,
+    required VoidCallback onPressed,
+  }) {
     return Container(
       width: 44,
       height: 44,
@@ -97,11 +159,45 @@ class DetailsScreen extends StatelessWidget {
             color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 10,
             offset: const Offset(0, 4),
-          )
+          ),
         ],
       ),
-      child: Icon(icon, size: 20, color: const Color(0xFF120216)),
+      child: IconButton(
+        onPressed: onPressed,
+        icon: Icon(icon, size: 20, color: const Color(0xFF120216)),
+        tooltip: icon == Icons.edit ? 'Edit expense' : 'Delete expense',
+      ),
     );
+  }
+
+  Future<void> _confirmDelete(
+    BuildContext context,
+    Expense currentExpense,
+  ) async {
+    final shouldDelete = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Delete expense?'),
+          content: Text('Delete "${currentExpense.name}" permanently?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext, true),
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (shouldDelete == true && context.mounted) {
+      context.read<MyAppState>().deleteExpense(currentExpense);
+      Navigator.pop(context);
+    }
   }
 
   Widget _buildChartSection(List<Expense> relatedExpenses) {
@@ -114,15 +210,17 @@ class DetailsScreen extends StatelessWidget {
       DateTime month = DateTime(now.year, now.month - i, 1);
       labels.add(DateFormat('MMM').format(month));
       double monthTotal = relatedExpenses
-          .where((e) => e.date.year == month.year && e.date.month == month.month)
+          .where(
+            (e) => e.date.year == month.year && e.date.month == month.month,
+          )
           .fold(0.0, (sum, item) => sum + item.amount);
       values[5 - i] = monthTotal;
     }
 
     final maxValue = values.fold(0.0, (a, b) => a > b ? a : b);
-    final normalizedValues = maxValue > 0 
-      ? values.map((v) => (v / maxValue) * 60.0).toList() 
-      : [10.0, 10.0, 10.0, 10.0, 10.0, 10.0]; // fallback flat chart
+    final normalizedValues = maxValue > 0
+        ? values.map((v) => (v / maxValue) * 60.0).toList()
+        : [10.0, 10.0, 10.0, 10.0, 10.0, 10.0]; // fallback flat chart
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -141,7 +239,9 @@ class DetailsScreen extends StatelessWidget {
                     width: 26,
                     height: normalizedValues[index] + 4,
                     decoration: BoxDecoration(
-                      color: isLast ? const Color(0xFFEF8767) : const Color(0xFFF7F4F7),
+                      color: isLast
+                          ? const Color(0xFFEF8767)
+                          : const Color(0xFFF7F4F7),
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
@@ -149,7 +249,9 @@ class DetailsScreen extends StatelessWidget {
                   Text(
                     labels[index],
                     style: TextStyle(
-                      color: isLast ? const Color(0xFF120216) : Colors.grey.shade400,
+                      color: isLast
+                          ? const Color(0xFF120216)
+                          : Colors.grey.shade400,
                       fontWeight: isLast ? FontWeight.bold : FontWeight.normal,
                       fontSize: 12,
                     ),
@@ -163,9 +265,16 @@ class DetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCategorySelector() {
+  Widget _buildCategorySelector(Expense currentExpense) {
     // Only showing relevant subset of categories based on usage
-    final categories = ['Food & Drink', 'Clothing', 'Fuel', 'Other', 'Electronics', 'Transport'];
+    final categories = [
+      'Food & Drink',
+      'Clothing',
+      'Fuel',
+      'Other',
+      'Electronics',
+      'Transport',
+    ];
     return SizedBox(
       height: 48,
       child: ListView.separated(
@@ -175,13 +284,17 @@ class DetailsScreen extends StatelessWidget {
         separatorBuilder: (_, __) => const SizedBox(width: 12),
         itemBuilder: (context, index) {
           final cat = categories[index];
-          final isSelected = cat == expense.category || (cat == 'Other' && !categories.contains(expense.category));
+          final isSelected =
+              cat == currentExpense.category ||
+              (cat == 'Other' && !categories.contains(currentExpense.category));
           return Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             decoration: BoxDecoration(
               color: isSelected ? const Color(0xFF8F659A) : Colors.transparent,
               borderRadius: BorderRadius.circular(24),
-              border: isSelected ? null : Border.all(color: Colors.grey.shade200),
+              border: isSelected
+                  ? null
+                  : Border.all(color: Colors.grey.shade200),
             ),
             child: Text(
               cat,
@@ -209,9 +322,9 @@ class DetailsScreen extends StatelessWidget {
         ),
       );
     }
-  
+
     final sortedExpenses = List<Expense>.from(relatedExpenses)
-        ..sort((a, b) => b.date.compareTo(a.date));
+      ..sort((a, b) => b.date.compareTo(a.date));
 
     return Container(
       width: double.infinity,
@@ -225,7 +338,10 @@ class DetailsScreen extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(24, 32, 24, 0),
       child: ListView(
         children: [
-          const Text('Category Transactions', style: TextStyle(color: Color(0xFF8F659A), fontSize: 14)),
+          const Text(
+            'Category Transactions',
+            style: TextStyle(color: Color(0xFF8F659A), fontSize: 14),
+          ),
           const SizedBox(height: 20),
           ...sortedExpenses.map((e) => _buildDarkTransactionTile(e)),
           const SizedBox(height: 10),
