@@ -12,11 +12,11 @@ A simple and intuitive Flutter application to keep track of your personal expens
 
 ## Demo
 
-<div style="display: flex; gap: 10px;">
+<!-- <div style="display: flex; gap: 10px;">
   <img src="images/Screenshots/AddExp.png" width="200"/>
   <img src="images/Screenshots/Exps.png" width="200"/>
   <img src="images/Screenshots/EditExps.png" width="200"/>
-</div>
+</div> -->
 
 Try it live: [Expense Tracker Demo](https://your-demo-url.com)
 
